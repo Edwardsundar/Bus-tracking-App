@@ -1,12 +1,10 @@
 package com.demo.bustracking
 
 import android.content.Intent
-import android.graphics.Point
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -27,7 +25,6 @@ import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,7 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -57,6 +54,8 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = Color.White
                 ) {
+                    val uri = "tel:${stringResource(R.string.phoneNumber)}"
+                    val intent = Intent(Intent.ACTION_DIAL, Uri.parse(uri))
                     Column(modifier = Modifier
                         .fillMaxSize()
                         .padding(20.dp)){
@@ -67,11 +66,29 @@ class MainActivity : ComponentActivity() {
                         BusList {
                             openGMapWithQuery(query = "${it.latitude},${it.longitude}")
                         }
+                        Spacer(modifier = Modifier.height(20.dp))
+                        InfoTextBox("Number of passengers:")
+                        Spacer(modifier = Modifier.height(20.dp))
+                        InfoTextBox("Number of Seats available:")
+                        Spacer(modifier = Modifier.height(250.dp))
+                        Text(
+                            text = "For Queries Contact us" ,
+                            color = Color.Blue ,
+                            modifier = Modifier
+                                .padding(top = 20.dp)
+                                .align(Alignment.End)
+                                .clickable {
+                                    this@MainActivity.startActivity(intent)
+                                }
+                            )
                     }
                 }
             }
         }
     }
+
+
+    // this function is used to open the map with location based on the longitude latitude
     fun openGMapWithQuery(latitude : String="0 ", longitude : String ="0",query : String  ){
         val gmmIntentUri = Uri.parse("geo:$latitude,$longitude?q=$query")
         val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
@@ -84,6 +101,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
 
 @Composable
 fun MapScreen(
@@ -156,7 +174,7 @@ fun BusList(onItemClick:(Location)-> Unit){
 
     Box(
         modifier = Modifier
-            .border(width = 2.dp , color = Color.Black , shape = RoundedCornerShape(10.dp))
+            .border(width = 1.dp , color = Color.Black , shape = RoundedCornerShape(10.dp))
     ){
         Row(
             modifier = Modifier
@@ -173,7 +191,6 @@ fun BusList(onItemClick:(Location)-> Unit){
                 textAlign = TextAlign.Start,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.fillMaxWidth(0.8f),
-                maxLines = 1
             )
             Icon(
                 imageVector = if (isClicked) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
@@ -197,4 +214,23 @@ fun BusList(onItemClick:(Location)-> Unit){
             }
         }
     }
+}
+
+@Composable
+fun InfoTextBox(
+    title : String
+){
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            //.height(50.dp)
+            .border(
+                width = 1.dp,
+                color = Color.Black,
+                shape = RoundedCornerShape(10.dp)
+            )
+    ){
+        Text(text = title , modifier = Modifier.padding(10.dp))
+    }
+
 }
