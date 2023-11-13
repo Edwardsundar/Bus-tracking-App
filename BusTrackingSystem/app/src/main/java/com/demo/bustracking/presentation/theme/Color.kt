@@ -1,4 +1,4 @@
-package com.demo.bustracking.ui.theme
+package com.demo.bustracking.presentation.theme
 
 import androidx.compose.ui.graphics.Color
 
